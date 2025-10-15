@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
@@ -24,5 +24,15 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/AttendanceCalendar.tsx", "src/index.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*", "src/App.tsx", "src/main.tsx", "src/App.css", "src/index.css", "src/assets"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/App.css",
+    "src/index.css",
+    "src/assets"
+  ]
 }

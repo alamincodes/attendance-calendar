@@ -7,7 +7,7 @@ import { resolve } from "path";
 export default defineConfig(({ mode }) => {
   if (mode === "library") {
     return {
-      plugins: [react()],
+      plugins: [react(), tailwindcss()],
       build: {
         lib: {
           entry: resolve(__dirname, "src/index.ts"),
@@ -22,10 +22,16 @@ export default defineConfig(({ mode }) => {
               react: "React",
               "react-dom": "ReactDOM",
             },
+            assetFileNames: (assetInfo) => {
+              // Ensure CSS is named properly
+              if (assetInfo.name === "style.css") return "index.css";
+              return assetInfo.name || "asset";
+            },
           },
         },
         outDir: "dist",
         sourcemap: true,
+        cssCodeSplit: false,
       },
     };
   }

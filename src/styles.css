@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Base styles for the attendance calendar */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+}
