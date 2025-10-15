@@ -1,15 +1,18 @@
 # Attendance Calendar
 
-A responsive React attendance calendar component with TypeScript support. This component provides a clean, modern interface for displaying attendance data with present/absent indicators.
+A highly customizable and developer-friendly React attendance calendar component with TypeScript support. This component provides a clean, modern interface for displaying attendance data with interactive features and full theme customization.
 
-## Features
+## ✨ Features
 
 - 📅 **Responsive Design**: Automatically adjusts between 7 and 14 columns based on container width
-- 🎨 **Customizable Styling**: Uses Tailwind CSS classes for easy customization
+- 🎨 **Full Theme Customization**: Customize all colors, borders, and styling
+- 🖱️ **Interactive Dates**: Click on dates to trigger custom actions
 - 📱 **Mobile Friendly**: Responsive design that works on all screen sizes
 - 🔧 **TypeScript Support**: Full TypeScript definitions included
 - ⚡ **Lightweight**: Minimal dependencies, only requires React
 - 🎯 **Accessible**: Includes proper ARIA labels and semantic HTML
+- 🎛️ **Developer Friendly**: Extensive props for customization
+- 🎭 **Pure Tailwind CSS**: No external CSS dependencies
 
 ## Installation
 
@@ -22,44 +25,64 @@ npm install attendance-calendar
 ### Basic Usage
 
 ```tsx
-import React, { useState } from 'react';
-import { AttendanceCalendar, MonthView } from 'attendance-calendar';
+import React, { useState } from "react";
+import { AttendanceCalendar, MonthView } from "attendance-calendar";
 
 function App() {
   const [view, setView] = useState<MonthView>({
     year: 2024,
-    monthIndex: 0 // January
+    monthIndex: 0, // January
   });
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <AttendanceCalendar
-        view={view}
-        onChangeView={setView}
-      />
+      <AttendanceCalendar view={view} onChangeView={setView} />
     </div>
   );
 }
 ```
 
-### With Attendance Data
+### With Attendance Data & Custom Theme
 
 ```tsx
-import React, { useState } from 'react';
-import { AttendanceCalendar, MonthView, DemoAttendance } from 'attendance-calendar';
+import React, { useState } from "react";
+import {
+  AttendanceCalendar,
+  MonthView,
+  AttendanceData,
+  CalendarTheme,
+} from "attendance-calendar";
 
 function App() {
   const [view, setView] = useState<MonthView>({
     year: 2024,
-    monthIndex: 0 // January
+    monthIndex: 0, // January
   });
 
   // Sample attendance data
-  const attendanceData: DemoAttendance = {
+  const attendanceData: AttendanceData = {
     year: 2024,
     monthIndex: 0,
-    presentDays: new Set([1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31]),
-    absentDays: new Set([4, 11, 18, 25])
+    presentDays: new Set([
+      1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
+    ]),
+    absentDays: new Set([4, 11, 18, 25]),
+  };
+
+  // Custom theme
+  const customTheme: CalendarTheme = {
+    primaryColor: "#10b981", // Green for present
+    absentColor: "#f59e0b", // Orange for absent
+    textColor: "#1f2937",
+    borderColor: "#d1d5db",
+    mutedTextColor: "#9ca3af",
+    hoverColor: "#f3f4f6",
+    backgroundColor: "#ffffff",
+  };
+
+  const handleDateClick = (day: number, month: number, year: number) => {
+    console.log(`Clicked on ${day}/${month + 1}/${year}`);
+    // Your custom logic here
   };
 
   return (
@@ -67,7 +90,12 @@ function App() {
       <AttendanceCalendar
         view={view}
         onChangeView={setView}
-        demoData={attendanceData}
+        attendanceData={attendanceData}
+        theme={customTheme}
+        onDateClick={handleDateClick}
+        showNavigation={true}
+        showWeekdayHeaders={true}
+        className="border border-gray-200 rounded-lg p-4"
       />
     </div>
   );
@@ -78,11 +106,16 @@ function App() {
 
 ### AttendanceCalendar
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `view` | `MonthView` | ✅ | Current month view with year and month index |
-| `onChangeView` | `(view: MonthView) => void` | ✅ | Callback when user navigates to different month |
-| `demoData` | `DemoAttendance` | ❌ | Optional attendance data to display |
+| Prop                 | Type                                                 | Required | Description                                     |
+| -------------------- | ---------------------------------------------------- | -------- | ----------------------------------------------- |
+| `view`               | `MonthView`                                          | ✅       | Current month view with year and month index    |
+| `onChangeView`       | `(view: MonthView) => void`                          | ✅       | Callback when user navigates to different month |
+| `attendanceData`     | `AttendanceData`                                     | ❌       | Optional attendance data to display             |
+| `theme`              | `CalendarTheme`                                      | ❌       | Custom theme colors and styling                 |
+| `onDateClick`        | `(day: number, month: number, year: number) => void` | ❌       | Callback when a date is clicked                 |
+| `showNavigation`     | `boolean`                                            | ❌       | Show/hide month navigation (default: true)      |
+| `showWeekdayHeaders` | `boolean`                                            | ❌       | Show/hide weekday headers (default: true)       |
+| `className`          | `string`                                             | ❌       | Additional CSS classes                          |
 
 ### Types
 
@@ -92,11 +125,21 @@ type MonthView = {
   monthIndex: number; // 0-11 (0 = January, 11 = December)
 };
 
-type DemoAttendance = {
+type AttendanceData = {
   year: number;
   monthIndex: number; // 0-11
   presentDays: Set<number>; // Set of day numbers (1-31)
   absentDays: Set<number>; // Set of day numbers (1-31)
+};
+
+type CalendarTheme = {
+  primaryColor?: string; // Color for present days (default: "#3b82f6")
+  absentColor?: string; // Color for absent days (default: "#ef4444")
+  textColor?: string; // Main text color (default: "#1f2937")
+  borderColor?: string; // Border color (default: "#e5e7eb")
+  mutedTextColor?: string; // Muted text color (default: "#6b7280")
+  hoverColor?: string; // Hover background color (default: "#f3f4f6")
+  backgroundColor?: string; // Background color (default: "#ffffff")
 };
 ```
 
@@ -148,15 +191,6 @@ To run the development server:
 ```bash
 npm run dev
 ```
-
-## Publishing
-
-Before publishing, make sure to:
-
-1. Update the version in `package.json`
-2. Update the repository URL and author information
-3. Run `npm run build` to ensure everything builds correctly
-4. Run `npm publish` to publish to npm
 
 ## License
 

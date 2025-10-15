@@ -5,11 +5,32 @@ export type MonthView = {
   monthIndex: number; // 0-11
 };
 
-export type DemoAttendance = {
+export type AttendanceData = {
   year: number;
   monthIndex: number; // 0-11
   presentDays: Set<number>;
   absentDays: Set<number>;
+};
+
+export type CalendarTheme = {
+  primaryColor?: string;
+  absentColor?: string;
+  textColor?: string;
+  borderColor?: string;
+  mutedTextColor?: string;
+  hoverColor?: string;
+  backgroundColor?: string;
+};
+
+export type CalendarProps = {
+  view: MonthView;
+  onChangeView: (next: MonthView) => void;
+  attendanceData?: AttendanceData;
+  theme?: CalendarTheme;
+  onDateClick?: (day: number, month: number, year: number) => void;
+  showNavigation?: boolean;
+  showWeekdayHeaders?: boolean;
+  className?: string;
 };
 
 const WEEKDAY_LABELS = [
@@ -49,17 +70,16 @@ function getMonthMatrix({ year, monthIndex }: MonthView, columns: number) {
   return cells;
 }
 
-type Props = {
-  view: MonthView;
-  onChangeView: (next: MonthView) => void;
-  demoData?: DemoAttendance;
-};
-
 export default function AttendanceCalendar({
   view,
   onChangeView,
-  demoData,
-}: Props) {
+  attendanceData,
+  theme = {},
+  onDateClick,
+  showNavigation = true,
+  showWeekdayHeaders = true,
+  className = "",
+}: CalendarProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = useState<number>(7);
 
@@ -107,78 +127,176 @@ export default function AttendanceCalendar({
     else onChangeView({ ...view, monthIndex: m });
   };
 
-  const isDemoMonth =
-    demoData !== undefined &&
-    view.year === demoData.year &&
-    view.monthIndex === demoData.monthIndex;
+  const isAttendanceMonth =
+    attendanceData !== undefined &&
+    view.year === attendanceData.year &&
+    view.monthIndex === attendanceData.monthIndex;
+
+  // Default theme colors - Modern design
+  const defaultTheme: Required<CalendarTheme> = {
+    primaryColor: "#10b981", // Modern emerald
+    absentColor: "#f59e0b", // Modern amber
+    textColor: "#0f172a", // Slate 900
+    borderColor: "#e2e8f0", // Slate 200
+    mutedTextColor: "#64748b", // Slate 500
+    hoverColor: "#f1f5f9", // Slate 100
+    backgroundColor: "#ffffff",
+  };
+
+  const finalTheme = { ...defaultTheme, ...theme };
+
+  const handleDateClick = (day: number) => {
+    if (onDateClick && isAttendanceMonth) {
+      onDateClick(day, view.monthIndex, view.year);
+    }
+  };
 
   return (
-    <div className="w-full">
+    <div
+      className={`w-full ${className}`}
+      style={{ backgroundColor: finalTheme.backgroundColor }}
+    >
       {/* Month header */}
-      <div className="flex items-center gap-2 mt-6 mb-4">
-        <button
-          onClick={goPrev}
-          className="size-8 rounded-md border border-border text-dashboard-text grid place-items-center hover:bg-accent"
-          aria-label="Previous month"
-        >
-          ‹
-        </button>
-        <button
-          onClick={goNext}
-          className="size-8 rounded-md border border-border text-dashboard-text grid place-items-center hover:bg-accent"
-          aria-label="Next month"
-        >
-          ›
-        </button>
-        <h4 className="ml-2 text-lg font-semibold text-dashboard-text">
-          {monthName}, {view.year}
-        </h4>
-      </div>
+      {showNavigation && (
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={goPrev}
+              className="size-10 rounded-xl border-2 grid place-items-center"
+              style={{
+                borderColor: finalTheme.borderColor,
+                color: finalTheme.textColor,
+                backgroundColor: finalTheme.hoverColor,
+              }}
+              aria-label="Previous month"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+            </button>
+            <button
+              onClick={goNext}
+              className="size-10 rounded-xl border-2 grid place-items-center"
+              style={{
+                borderColor: finalTheme.borderColor,
+                color: finalTheme.textColor,
+                backgroundColor: finalTheme.hoverColor,
+              }}
+              aria-label="Next month"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <polyline points="9,18 15,12 9,6"></polyline>
+              </svg>
+            </button>
+          </div>
+          <h2
+            className="text-2xl font-bold"
+            style={{ color: finalTheme.textColor }}
+          >
+            {monthName} {view.year}
+          </h2>
+          <div className="w-20"></div> {/* Spacer for centering */}
+        </div>
+      )}
 
       {/* Weekday headers */}
-      <div
-        className="grid gap-3 text-center mb-2"
-        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
-      >
-        {weekdayHeaders.map((weekday, i) => (
-          <div key={i} className="text-sm text-muted-foreground">
-            {weekday}
-          </div>
-        ))}
-      </div>
+      {showWeekdayHeaders && (
+        <div
+          className="grid gap-4 text-center mb-6"
+          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+        >
+          {weekdayHeaders.map((weekday, i) => (
+            <div
+              key={i}
+              className="text-sm font-semibold uppercase tracking-wide py-2"
+              style={{
+                color: finalTheme.mutedTextColor,
+                backgroundColor: finalTheme.hoverColor,
+                borderRadius: "12px",
+              }}
+            >
+              {weekday}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Calendar grid */}
       <div
         ref={containerRef}
-        className="grid gap-3"
+        className="grid gap-4"
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
         {cells.map((cell, idx) => {
           const isPresent =
-            isDemoMonth &&
+            isAttendanceMonth &&
             cell.inCurrentMonth &&
-            demoData?.presentDays.has(cell.day);
+            attendanceData?.presentDays.has(cell.day);
           const isAbsent =
-            isDemoMonth &&
+            isAttendanceMonth &&
             cell.inCurrentMonth &&
-            demoData?.absentDays.has(cell.day);
+            attendanceData?.absentDays.has(cell.day);
+
           const baseCircle =
             columns >= 14
-              ? "size-6 sm:size-10 rounded-full grid place-items-center text-md"
-              : "size-9 sm:size-10 rounded-full grid place-items-center text-sm";
-          const mutedCircle = "text-muted-foreground/60 border border-border";
-          const presentCircle = "bg-primary text-white";
-          const absentCircle = "bg-red-500 text-white";
+              ? "size-8 sm:size-12 rounded-2xl grid place-items-center text-sm font-semibold cursor-pointer"
+              : "size-12 sm:size-14 rounded-2xl grid place-items-center text-base font-semibold cursor-pointer";
+
+          const isClickable =
+            onDateClick && cell.inCurrentMonth && isAttendanceMonth;
+
+          let cellStyle: React.CSSProperties = {};
+          let cellClassName = baseCircle;
+
+          if (!cell.inCurrentMonth) {
+            cellStyle = {
+              color: finalTheme.mutedTextColor,
+              backgroundColor: finalTheme.hoverColor,
+              border: `2px solid ${finalTheme.borderColor}`,
+            };
+          } else if (isPresent) {
+            cellStyle = {
+              backgroundColor: finalTheme.primaryColor,
+              color: "#ffffff",
+              border: `2px solid ${finalTheme.primaryColor}`,
+            };
+          } else if (isAbsent) {
+            cellStyle = {
+              backgroundColor: finalTheme.absentColor,
+              color: "#ffffff",
+              border: `2px solid ${finalTheme.absentColor}`,
+            };
+          } else {
+            cellStyle = {
+              color: finalTheme.textColor,
+              backgroundColor: "transparent",
+              border: `2px solid ${finalTheme.borderColor}`,
+            };
+          }
 
           return (
             <div key={idx} className="flex items-center justify-center">
               <div
-                className={[
-                  baseCircle,
-                  cell.inCurrentMonth ? "" : mutedCircle,
-                  isPresent ? presentCircle : "",
-                  isAbsent ? absentCircle : "",
-                ].join(" ")}
+                className={cellClassName}
+                style={cellStyle}
+                onClick={() => isClickable && handleDateClick(cell.day)}
+                title={
+                  isClickable ? `Click to interact with ${cell.day}` : undefined
+                }
               >
                 {cell.day}
               </div>

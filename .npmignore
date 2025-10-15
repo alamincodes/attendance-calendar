@@ -24,6 +24,11 @@ test/
 # Documentation (keep README.md)
 docs/
 examples/
+src/App.tsx
+src/main.tsx
+src/App.css
+src/index.css
+src/assets/
 
 # IDE files
 .vscode/
