@@ -17,7 +17,7 @@ A highly customizable and developer-friendly React attendance calendar component
 ## Installation
 
 ```bash
-npm install attendance-calendar
+npm install react-attendance-calendar
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ npm install attendance-calendar
 
 ```tsx
 import React, { useState } from "react";
-import { AttendanceCalendar, MonthView } from "attendance-calendar";
+import { AttendanceCalendar, MonthView } from "react-attendance-calendar";
 
 function App() {
   const [view, setView] = useState<MonthView>({
@@ -51,7 +51,7 @@ import {
   MonthView,
   AttendanceData,
   CalendarTheme,
-} from "attendance-calendar";
+} from "react-attendance-calendar";
 
 function App() {
   const [view, setView] = useState<MonthView>({
