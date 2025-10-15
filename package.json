@@ -28,9 +28,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/attendance-calendar.git"
+    "url": "https://github.com/alamincodes/attendance-calendar"
   },
-  "homepage": "https://github.com/yourusername/attendance-calendar#readme",
+  "homepage": "https://github.com/alamincodes/attendance-calendar#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"

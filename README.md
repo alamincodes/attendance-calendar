@@ -145,37 +145,32 @@ type CalendarTheme = {
 
 ## Styling
 
-The component uses Tailwind CSS classes. Make sure you have Tailwind CSS installed and configured in your project. The component expects these CSS classes to be available:
+The component uses Tailwind CSS classes. Make sure you have Tailwind CSS installed and configured in your project. The component uses these standard Tailwind classes:
 
-- Layout: `w-full`, `flex`, `grid`, `gap-3`, `items-center`, `justify-center`
-- Sizing: `size-8`, `size-9`, `size-10`, `size-6`
-- Colors: `text-dashboard-text`, `text-muted-foreground`, `bg-primary`, `bg-red-500`, `text-white`
-- Borders: `border`, `border-border`, `rounded-md`, `rounded-full`
-- Spacing: `mt-6`, `mb-4`, `ml-2`, `mb-2`
-- Typography: `text-lg`, `font-semibold`, `text-sm`, `text-md`
+- Layout: `w-full`, `flex`, `grid`, `gap-3`, `gap-4`, `items-center`, `justify-center`
+- Sizing: `size-8`, `size-10`, `size-12`, `size-14`
+- Colors: `bg-emerald-500`, `bg-amber-500`, `text-slate-900`, `text-slate-600`
+- Borders: `border`, `border-slate-200`, `rounded-xl`, `rounded-2xl`
+- Spacing: `mb-4`, `mb-6`, `mb-8`, `p-6`, `p-8`
+- Typography: `text-xl`, `text-2xl`, `font-semibold`, `font-bold`
 
 ### Custom Styling
 
-You can customize the appearance by overriding the CSS classes or using CSS-in-JS solutions:
+You can customize the appearance using the `theme` prop or by adding custom CSS classes:
 
 ```tsx
 // Example with custom styling
-<div className="attendance-calendar-wrapper">
-  <AttendanceCalendar
-    view={view}
-    onChangeView={setView}
-    demoData={attendanceData}
-  />
-</div>
-```
-
-```css
-.attendance-calendar-wrapper {
-  /* Your custom styles */
-  --primary-color: #3b82f6;
-  --absent-color: #ef4444;
-  --text-color: #1f2937;
-}
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  attendanceData={attendanceData}
+  theme={{
+    primaryColor: "#3b82f6",
+    absentColor: "#ef4444",
+    textColor: "#1f2937",
+  }}
+  className="my-custom-calendar"
+/>
 ```
 
 ## Development
