@@ -132,6 +132,33 @@ const attendanceData = [
 />
 ```
 
+### Custom Cell Sizes
+
+```tsx
+// Square cells with custom size
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  cellSize={60} // 60px x 60px cells
+/>
+
+// Custom width and height
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  cellWidth={80}  // 80px wide
+  cellHeight={50} // 50px tall
+/>
+
+// Small compact calendar
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  cellSize={32} // 32px x 32px cells
+  cellClassName="text-xs"
+/>
+```
+
 ### Complete Example with Custom Styling
 
 ```tsx
@@ -210,6 +237,9 @@ export default App;
 | `onDateClick`               | `(day, month, year) => void` | ❌       | Date click callback                                |
 | `showNavigation`            | `boolean`                    | ❌       | Show nav arrows (default: `true`)                  |
 | `showWeekdayHeaders`        | `boolean`                    | ❌       | Show weekday headers (default: `true`)             |
+| `cellSize`                  | `number`                     | ❌       | Size in pixels for all calendar cells (square)     |
+| `cellHeight`                | `number`                     | ❌       | Height in pixels for calendar cells                |
+| `cellWidth`                 | `number`                     | ❌       | Width in pixels for calendar cells                 |
 | `className`                 | `string`                     | ❌       | Additional classes for root element                |
 | `cellClassName`             | `string`                     | ❌       | Custom classes for all cells                       |
 | `presentCellClassName`      | `string`                     | ❌       | Custom classes for present days                    |
@@ -258,7 +288,18 @@ The component uses Tailwind CSS classes with a modern design system:
 
 ### Customization
 
-Override any styling using the `className` props. All Tailwind classes are supported:
+Override any styling using the `className` props and size controls:
+
+#### Size Control
+
+- **`cellSize`** - Set both width and height for square cells
+- **`cellWidth`** - Set only the width of cells
+- **`cellHeight`** - Set only the height of cells
+- **Automatic font sizing** - Text size adjusts based on cell dimensions
+
+#### Styling Options
+
+All Tailwind classes are supported:
 
 - Colors, spacing, borders, shadows
 - Hover effects, transitions, animations

@@ -30,6 +30,10 @@ export type CalendarProps = {
   showNavigation?: boolean;
   showWeekdayHeaders?: boolean;
   className?: string;
+  // Size customization props
+  cellSize?: number; // Size in pixels for calendar cells
+  cellHeight?: number; // Height in pixels for calendar cells
+  cellWidth?: number; // Width in pixels for calendar cells
   // Full customization props
   cellClassName?: string;
   presentCellClassName?: string;
@@ -85,6 +89,10 @@ export default function AttendanceCalendar({
   showNavigation = true,
   showWeekdayHeaders = true,
   className = "",
+  // Size customization props
+  cellSize,
+  cellHeight,
+  cellWidth,
   // Customization props
   cellClassName = "",
   presentCellClassName = "",
@@ -262,12 +270,45 @@ export default function AttendanceCalendar({
             cell.inCurrentMonth &&
             currentMonthData?.absentDays.has(cell.day);
 
+          // Calculate cell size based on props
+          const getCellSize = () => {
+            if (cellSize) {
+              return {
+                width: `${cellSize}px`,
+                height: `${cellSize}px`,
+                fontSize: cellSize > 40 ? "text-base" : "text-sm",
+              };
+            }
+            if (cellHeight || cellWidth) {
+              return {
+                width: cellWidth ? `${cellWidth}px` : undefined,
+                height: cellHeight ? `${cellHeight}px` : undefined,
+                fontSize:
+                  (cellHeight && cellHeight > 40) ||
+                  (cellWidth && cellWidth > 40)
+                    ? "text-base"
+                    : "text-sm",
+              };
+            }
+            return {
+              width: undefined,
+              height: undefined,
+              fontSize: columns >= 14 ? "text-sm" : "text-base",
+            };
+          };
+
+          const cellSizeStyle = getCellSize();
+
           const baseCircle = cn(
             "rounded-2xl grid place-items-center font-semibold cursor-pointer",
             "transition-all duration-200",
-            columns >= 14
-              ? "size-8 sm:size-12 text-sm"
-              : "size-12 sm:size-14 text-base",
+            !cellSize &&
+              !cellHeight &&
+              !cellWidth &&
+              (columns >= 14
+                ? "size-8 sm:size-12 text-sm"
+                : "size-12 sm:size-14 text-base"),
+            cellSizeStyle.fontSize,
             cellClassName
           );
 
@@ -304,6 +345,10 @@ export default function AttendanceCalendar({
             <div key={idx} className={cn("flex items-center justify-center")}>
               <div
                 className={finalCellClassName}
+                style={{
+                  width: cellSizeStyle.width,
+                  height: cellSizeStyle.height,
+                }}
                 onClick={() => isClickable && handleDateClick(cell.day)}
                 title={
                   isClickable ? `Click to interact with ${cell.day}` : undefined

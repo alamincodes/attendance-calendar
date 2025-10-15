@@ -85,8 +85,8 @@ function App() {
               onChangeView={setView}
               attendanceData={attendanceData}
               onDateClick={handleDateClick}
-              cellClassName="rounded-full"
-              presentCellClassName="rounded-full shadow-lg"
+              cellClassName="rounded-full w-20 h-20"
+              presentCellClassName="rounded-ful shadow-lg text-sm"
               absentCellClassName="rounded-full border-4 border-red-300"
               navigationButtonClassName="rounded-full bg-blue-500 text-white hover:bg-blue-600"
               weekdayHeaderClassName="rounded-full bg-gray-100"
@@ -116,13 +116,14 @@ function App() {
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           <div className="bg-white border border-slate-200 rounded-xl p-6">
             <h2 className="text-xl font-semibold text-slate-900 mb-4">
-              Less Rounded
+              Custom Sizes
             </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
               attendanceData={attendanceData}
               onDateClick={handleDateClick}
+              cellSize={50}
               cellClassName="rounded-lg"
               presentCellClassName="rounded-lg bg-emerald-500 hover:scale-110"
               absentCellClassName="rounded-lg bg-orange-500 hover:scale-110"
@@ -134,20 +135,20 @@ function App() {
 
           <div className="bg-white border border-slate-200 rounded-xl p-6">
             <h2 className="text-xl font-semibold text-slate-900 mb-4">
-              Gradient Background
+              Compact Calendar
             </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
               attendanceData={attendanceData}
               onDateClick={handleDateClick}
-              containerClassName="p-8 bg-gradient-to-r from-blue-50 to-purple-50"
-              cellClassName="rounded-2xl"
-              presentCellClassName="rounded-2xl bg-gradient-to-r from-green-400 to-green-600 text-white"
-              absentCellClassName="rounded-2xl bg-gradient-to-r from-red-400 to-red-600 text-white"
-              navigationButtonClassName="rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-              weekdayHeaderClassName="rounded-2xl bg-gradient-to-r from-gray-100 to-gray-200"
-              monthTitleClassName="text-3xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+              cellSize={32}
+              cellClassName="rounded-full text-xs"
+              presentCellClassName="rounded-full bg-green-500 text-white"
+              absentCellClassName="rounded-full bg-red-500 text-white"
+              navigationButtonClassName="rounded-full bg-gray-500 text-white size-8"
+              weekdayHeaderClassName="rounded-full bg-gray-100 text-xs"
+              monthTitleClassName="text-lg text-gray-800"
             />
           </div>
         </div>
@@ -162,6 +163,24 @@ function App() {
                 Available Props:
               </h3>
               <ul className="space-y-2 text-sm text-slate-600">
+                <li>
+                  <code className="bg-gray-100 px-2 py-1 rounded">
+                    cellSize
+                  </code>{" "}
+                  - Size in pixels for all cells (square)
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-2 py-1 rounded">
+                    cellWidth
+                  </code>{" "}
+                  - Width in pixels for cells
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-2 py-1 rounded">
+                    cellHeight
+                  </code>{" "}
+                  - Height in pixels for cells
+                </li>
                 <li>
                   <code className="bg-gray-100 px-2 py-1 rounded">
                     cellClassName
