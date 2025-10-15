@@ -9,14 +9,48 @@ function App() {
   });
 
   // Sample attendance data for January 2024
-  const attendanceData: AttendanceData = {
-    year: 2024,
-    monthIndex: 0,
-    presentDays: new Set([
-      1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
-    ]),
-    absentDays: new Set([4, 11, 18, 25]),
-  };
+  // Demo data for multiple months
+  const attendanceData: AttendanceData = [
+    // January 2024
+    {
+      year: 2024,
+      monthIndex: 0,
+      presentDays: new Set([
+        1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
+      ]),
+      absentDays: new Set([4, 11, 18, 25]),
+    },
+    // February 2024
+    {
+      year: 2024,
+      monthIndex: 1,
+      presentDays: new Set([
+        1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
+        29,
+      ]),
+      absentDays: new Set([3, 10, 17, 24]),
+    },
+    // March 2024
+    {
+      year: 2024,
+      monthIndex: 2,
+      presentDays: new Set([
+        1, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 25, 26, 27,
+        28, 29,
+      ]),
+      absentDays: new Set([2, 9, 16, 23, 30]),
+    },
+    // December 2023
+    {
+      year: 2023,
+      monthIndex: 11,
+      presentDays: new Set([
+        1, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 26, 27, 28,
+        29,
+      ]),
+      absentDays: new Set([2, 9, 16, 23, 25, 30]),
+    },
+  ];
 
   const handleDateClick = (day: number, month: number, year: number) => {
     console.log(`Clicked on ${day}/${month + 1}/${year}`);

@@ -13,15 +13,17 @@ export type MonthView = {
   monthIndex: number; // 0-11
 };
 
-export type AttendanceData = {
+export type MonthAttendanceData = {
   year: number;
   monthIndex: number; // 0-11
   presentDays: Set<number>;
   absentDays: Set<number>;
 };
 
+export type AttendanceData = MonthAttendanceData | MonthAttendanceData[];
+
 export type CalendarProps = {
-  view: MonthView;
+  view?: MonthView;
   onChangeView: (next: MonthView) => void;
   attendanceData?: AttendanceData;
   onDateClick?: (day: number, month: number, year: number) => void;
@@ -76,7 +78,7 @@ function getMonthMatrix({ year, monthIndex }: MonthView, columns: number) {
 }
 
 export default function AttendanceCalendar({
-  view,
+  view = { year: new Date().getFullYear(), monthIndex: new Date().getMonth() },
   onChangeView,
   attendanceData,
   onDateClick,
@@ -139,10 +141,24 @@ export default function AttendanceCalendar({
     else onChangeView({ ...view, monthIndex: m });
   };
 
-  const isAttendanceMonth =
-    attendanceData !== undefined &&
-    view.year === attendanceData.year &&
-    view.monthIndex === attendanceData.monthIndex;
+  // Helper function to get attendance data for current month
+  const getCurrentMonthData = (): MonthAttendanceData | undefined => {
+    if (!attendanceData) return undefined;
+
+    if (Array.isArray(attendanceData)) {
+      return attendanceData.find(
+        (data) => data.year === view.year && data.monthIndex === view.monthIndex
+      );
+    } else {
+      return attendanceData.year === view.year &&
+        attendanceData.monthIndex === view.monthIndex
+        ? attendanceData
+        : undefined;
+    }
+  };
+
+  const currentMonthData = getCurrentMonthData();
+  const isAttendanceMonth = currentMonthData !== undefined;
 
   const handleDateClick = (day: number) => {
     if (onDateClick && isAttendanceMonth) {
@@ -240,11 +256,11 @@ export default function AttendanceCalendar({
           const isPresent =
             isAttendanceMonth &&
             cell.inCurrentMonth &&
-            attendanceData?.presentDays.has(cell.day);
+            currentMonthData?.presentDays.has(cell.day);
           const isAbsent =
             isAttendanceMonth &&
             cell.inCurrentMonth &&
-            attendanceData?.absentDays.has(cell.day);
+            currentMonthData?.absentDays.has(cell.day);
 
           const baseCircle = cn(
             "rounded-2xl grid place-items-center font-semibold cursor-pointer",
