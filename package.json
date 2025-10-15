@@ -1,6 +1,6 @@
 {
   "name": "react-attendance-calendar",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "A responsive React attendance calendar component with TypeScript support",
   "type": "module",
   "main": "./dist/index.js",

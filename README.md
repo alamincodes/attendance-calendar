@@ -107,7 +107,6 @@ const attendanceData = [
     monthIndex: 1,
     presentDays: new Set([
       1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
-      29,
     ]),
     absentDays: new Set([3, 10, 17, 24]),
   },
@@ -167,7 +166,6 @@ function App() {
       monthIndex: 1,
       presentDays: new Set([
         1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
-        29,
       ]),
       absentDays: new Set([3, 10, 17, 24]),
     },
