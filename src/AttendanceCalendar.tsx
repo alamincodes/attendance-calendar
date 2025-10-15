@@ -1,4 +1,12 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+// Utility function to merge Tailwind classes with conflict resolution
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export type MonthView = {
   year: number;
@@ -12,25 +20,22 @@ export type AttendanceData = {
   absentDays: Set<number>;
 };
 
-export type CalendarTheme = {
-  primaryColor?: string;
-  absentColor?: string;
-  textColor?: string;
-  borderColor?: string;
-  mutedTextColor?: string;
-  hoverColor?: string;
-  backgroundColor?: string;
-};
-
 export type CalendarProps = {
   view: MonthView;
   onChangeView: (next: MonthView) => void;
   attendanceData?: AttendanceData;
-  theme?: CalendarTheme;
   onDateClick?: (day: number, month: number, year: number) => void;
   showNavigation?: boolean;
   showWeekdayHeaders?: boolean;
   className?: string;
+  // Full customization props
+  cellClassName?: string;
+  presentCellClassName?: string;
+  absentCellClassName?: string;
+  navigationButtonClassName?: string;
+  weekdayHeaderClassName?: string;
+  monthTitleClassName?: string;
+  containerClassName?: string;
 };
 
 const WEEKDAY_LABELS = [
@@ -74,11 +79,18 @@ export default function AttendanceCalendar({
   view,
   onChangeView,
   attendanceData,
-  theme = {},
   onDateClick,
   showNavigation = true,
   showWeekdayHeaders = true,
   className = "",
+  // Customization props
+  cellClassName = "",
+  presentCellClassName = "",
+  absentCellClassName = "",
+  navigationButtonClassName = "",
+  weekdayHeaderClassName = "",
+  monthTitleClassName = "",
+  containerClassName = "",
 }: CalendarProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = useState<number>(7);
@@ -132,19 +144,6 @@ export default function AttendanceCalendar({
     view.year === attendanceData.year &&
     view.monthIndex === attendanceData.monthIndex;
 
-  // Default theme colors - Modern design
-  const defaultTheme: Required<CalendarTheme> = {
-    primaryColor: "#10b981", // Modern emerald
-    absentColor: "#f59e0b", // Modern amber
-    textColor: "#0f172a", // Slate 900
-    borderColor: "#e2e8f0", // Slate 200
-    mutedTextColor: "#64748b", // Slate 500
-    hoverColor: "#f1f5f9", // Slate 100
-    backgroundColor: "#ffffff",
-  };
-
-  const finalTheme = { ...defaultTheme, ...theme };
-
   const handleDateClick = (day: number) => {
     if (onDateClick && isAttendanceMonth) {
       onDateClick(day, view.monthIndex, view.year);
@@ -152,22 +151,18 @@ export default function AttendanceCalendar({
   };
 
   return (
-    <div
-      className={`w-full ${className}`}
-      style={{ backgroundColor: finalTheme.backgroundColor }}
-    >
+    <div className={cn("w-full", className, containerClassName)}>
       {/* Month header */}
       {showNavigation && (
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <button
               onClick={goPrev}
-              className="size-10 rounded-xl border-2 grid place-items-center"
-              style={{
-                borderColor: finalTheme.borderColor,
-                color: finalTheme.textColor,
-                backgroundColor: finalTheme.hoverColor,
-              }}
+              className={cn(
+                "size-10 rounded-xl border-2 border-slate-200 text-slate-700 grid place-items-center",
+                "transition-colors duration-200 hover:bg-slate-50",
+                navigationButtonClassName
+              )}
               aria-label="Previous month"
             >
               <svg
@@ -183,12 +178,11 @@ export default function AttendanceCalendar({
             </button>
             <button
               onClick={goNext}
-              className="size-10 rounded-xl border-2 grid place-items-center"
-              style={{
-                borderColor: finalTheme.borderColor,
-                color: finalTheme.textColor,
-                backgroundColor: finalTheme.hoverColor,
-              }}
+              className={cn(
+                "size-10 rounded-xl border-2 border-slate-200 text-slate-700 grid place-items-center",
+                "transition-colors duration-200 hover:bg-slate-50",
+                navigationButtonClassName
+              )}
               aria-label="Next month"
             >
               <svg
@@ -204,8 +198,10 @@ export default function AttendanceCalendar({
             </button>
           </div>
           <h2
-            className="text-2xl font-bold"
-            style={{ color: finalTheme.textColor }}
+            className={cn(
+              "text-2xl font-bold text-slate-900",
+              monthTitleClassName
+            )}
           >
             {monthName} {view.year}
           </h2>
@@ -216,18 +212,17 @@ export default function AttendanceCalendar({
       {/* Weekday headers */}
       {showWeekdayHeaders && (
         <div
-          className="grid gap-4 text-center mb-6"
+          className={cn("grid gap-4 text-center mb-6")}
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         >
           {weekdayHeaders.map((weekday, i) => (
             <div
               key={i}
-              className="text-sm font-semibold uppercase tracking-wide py-2"
-              style={{
-                color: finalTheme.mutedTextColor,
-                backgroundColor: finalTheme.hoverColor,
-                borderRadius: "12px",
-              }}
+              className={cn(
+                "text-sm font-semibold uppercase tracking-wide py-2",
+                "text-slate-500 bg-transparent rounded-xl",
+                weekdayHeaderClassName
+              )}
             >
               {weekday}
             </div>
@@ -238,7 +233,7 @@ export default function AttendanceCalendar({
       {/* Calendar grid */}
       <div
         ref={containerRef}
-        className="grid gap-4"
+        className={cn("grid gap-4")}
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
         {cells.map((cell, idx) => {
@@ -251,48 +246,48 @@ export default function AttendanceCalendar({
             cell.inCurrentMonth &&
             attendanceData?.absentDays.has(cell.day);
 
-          const baseCircle =
+          const baseCircle = cn(
+            "rounded-2xl grid place-items-center font-semibold cursor-pointer",
+            "transition-all duration-200",
             columns >= 14
-              ? "size-8 sm:size-12 rounded-2xl grid place-items-center text-sm font-semibold cursor-pointer"
-              : "size-12 sm:size-14 rounded-2xl grid place-items-center text-base font-semibold cursor-pointer";
+              ? "size-8 sm:size-12 text-sm"
+              : "size-12 sm:size-14 text-base",
+            cellClassName
+          );
 
           const isClickable =
             onDateClick && cell.inCurrentMonth && isAttendanceMonth;
 
-          let cellStyle: React.CSSProperties = {};
-          let cellClassName = baseCircle;
+          let finalCellClassName = baseCircle;
 
           if (!cell.inCurrentMonth) {
-            cellStyle = {
-              color: finalTheme.mutedTextColor,
-              backgroundColor: finalTheme.hoverColor,
-              border: `2px solid ${finalTheme.borderColor}`,
-            };
+            finalCellClassName = cn(
+              baseCircle,
+              "text-slate-400 border-2 border-slate-200"
+            );
           } else if (isPresent) {
-            cellStyle = {
-              backgroundColor: finalTheme.primaryColor,
-              color: "#ffffff",
-              border: `2px solid ${finalTheme.primaryColor}`,
-            };
+            finalCellClassName = cn(
+              baseCircle,
+              "bg-emerald-500 text-white border-2 border-emerald-500",
+              presentCellClassName
+            );
           } else if (isAbsent) {
-            cellStyle = {
-              backgroundColor: finalTheme.absentColor,
-              color: "#ffffff",
-              border: `2px solid ${finalTheme.absentColor}`,
-            };
+            finalCellClassName = cn(
+              baseCircle,
+              "bg-amber-500 text-white border-2 border-amber-500",
+              absentCellClassName
+            );
           } else {
-            cellStyle = {
-              color: finalTheme.textColor,
-              backgroundColor: "transparent",
-              border: `2px solid ${finalTheme.borderColor}`,
-            };
+            finalCellClassName = cn(
+              baseCircle,
+              "text-slate-700 border-2 border-slate-200"
+            );
           }
 
           return (
-            <div key={idx} className="flex items-center justify-center">
+            <div key={idx} className={cn("flex items-center justify-center")}>
               <div
-                className={cellClassName}
-                style={cellStyle}
+                className={finalCellClassName}
                 onClick={() => isClickable && handleDateClick(cell.day)}
                 title={
                   isClickable ? `Click to interact with ${cell.day}` : undefined
