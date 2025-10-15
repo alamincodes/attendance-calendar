@@ -173,20 +173,6 @@ You can customize the appearance using the `theme` prop or by adding custom CSS 
 />
 ```
 
-## Development
-
-To build the library:
-
-```bash
-npm run build
-```
-
-To run the development server:
-
-```bash
-npm run dev
-```
-
 ## License
 
 MIT
