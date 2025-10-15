@@ -1,0 +1,36 @@
+# Source files
+src/
+*.ts
+*.tsx
+!*.d.ts
+
+# Development files
+vite.config.ts
+tsconfig*.json
+eslint.config.js
+.gitignore
+.npmignore
+
+# Development dependencies
+node_modules/
+*.log
+
+# Test files
+**/*.test.*
+**/*.spec.*
+__tests__/
+test/
+
+# Documentation (keep README.md)
+docs/
+examples/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
