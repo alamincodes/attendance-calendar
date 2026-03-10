@@ -6,4 +6,6 @@ export type {
   MonthView,
   AttendanceData,
   CalendarProps,
+  MonthTitlePosition,
+  MonthAttendanceData,
 } from "./AttendanceCalendar";

@@ -7,13 +7,15 @@ A modern, responsive, and highly customizable attendance calendar component for 
 - 📅 **Responsive design** - Automatically switches between 7-14 columns based on container width
 - 🎨 **Fully customizable** - Complete control with Tailwind CSS classes
 - 🖱️ **Interactive** - Date click callbacks with hover effects
-- 📱 **Mobile-friendly** - Responsive grid layout with touch-friendly interactions
+- 📱 **Mobile-friendly** - Fluid cells scale with container — no overflow on any screen size
 - 🔧 **TypeScript support** - Full type safety and IntelliSense
 - 🎭 **Beautiful defaults** - Modern design with emerald/amber color scheme
 - 📊 **Multi-month support** - Provide attendance data for multiple months at once
 - 🔄 **Flexible data format** - Support both single month and array of months
 - ⚡ **Auto-initialization** - Defaults to current month if no view provided
 - 🎯 **Smart navigation** - Seamless month/year transitions
+- 🗓️ **Today highlight** - Current date is automatically highlighted
+- 📐 **Flexible header** - Position month title left, center, or right
 
 ## 📦 Installation
 
@@ -118,6 +120,19 @@ const attendanceData = [
   attendanceData={attendanceData}
   onDateClick={(day, month, year) => console.log(day, month, year)}
 />;
+```
+
+### Custom Month Title Position
+
+```tsx
+// Center (default) — [←]  January 2024  [→]
+<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="center" />
+
+// Left — January 2024  [← →]
+<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="left" />
+
+// Right — [← →]  January 2024
+<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="right" />
 ```
 
 ### Custom Styling
@@ -235,6 +250,7 @@ export default App;
 | `onChangeView`              | `(view: MonthView) => void`  | ✅       | Month navigation callback                          |
 | `attendanceData`            | `AttendanceData`             | ❌       | Present/absent days data (single month or array)   |
 | `onDateClick`               | `(day, month, year) => void` | ❌       | Date click callback                                |
+| `monthTitlePosition`        | `'left' \| 'center' \| 'right'` | ❌    | Position of the month title (default: `'center'`)  |
 | `showNavigation`            | `boolean`                    | ❌       | Show nav arrows (default: `true`)                  |
 | `showWeekdayHeaders`        | `boolean`                    | ❌       | Show weekday headers (default: `true`)             |
 | `cellSize`                  | `number`                     | ❌       | Size in pixels for all calendar cells (square)     |
@@ -266,6 +282,8 @@ type MonthAttendanceData = {
 
 // Support both single month and multiple months
 type AttendanceData = MonthAttendanceData | MonthAttendanceData[];
+
+type MonthTitlePosition = "left" | "center" | "right";
 ```
 
 ## 🎨 Styling
@@ -282,9 +300,10 @@ The component uses Tailwind CSS classes with a modern design system:
 
 ### Responsive Behavior
 
-- **Desktop**: 7 columns with larger cells (`size-12 sm:size-14`)
-- **Wide screens**: 14 columns with smaller cells (`size-8 sm:size-12`)
-- **Mobile**: Optimized touch targets and spacing
+- **All screens**: Cells use `w-full aspect-square` by default — they fluidly fill the grid column with no overflow
+- **Desktop (≥700px container)**: Switches to 14-column layout
+- **Narrow containers / mobile**: 7-column layout with touch-friendly sizing
+- **Fixed size mode**: Use `cellSize`, `cellWidth`, or `cellHeight` for explicit pixel dimensions
 
 ### Customization
 

@@ -1,6 +1,6 @@
 {
   "name": "react-attendance-calendar",
-  "version": "2.3.6",
+  "version": "2.4.0",
   "description": "A responsive React attendance calendar component with TypeScript support",
   "type": "module",
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alamincodes/attendance-calendar"
+    "url": "git+https://github.com/alamincodes/attendance-calendar.git"
   },
   "homepage": "https://github.com/alamincodes/attendance-calendar#readme",
   "peerDependencies": {
