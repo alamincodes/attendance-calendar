@@ -38,6 +38,7 @@ export type CalendarProps = {
   // Layout props
   monthTitlePosition?: MonthTitlePosition;
   // Full customization props
+  /** Applied after state styles so hovers/shape utilities override defaults (today uses `todayCellClassName` last) */
   cellClassName?: string;
   presentCellClassName?: string;
   absentCellClassName?: string;
@@ -320,8 +321,7 @@ export default function AttendanceCalendar({
             !hasFixedSize && "w-full aspect-square",
             cellFontSize,
             isClickable && "cursor-pointer hover:scale-105 active:scale-95",
-            !isClickable && cell.inCurrentMonth && "cursor-default",
-            cellClassName
+            !isClickable && cell.inCurrentMonth && "cursor-default"
           );
 
           let stateClass = "";
@@ -348,7 +348,12 @@ export default function AttendanceCalendar({
           return (
             <div key={idx} className="flex items-center justify-center p-0.5">
               <div
-                className={cn(baseCell, stateClass, isToday && todayCellClassName)}
+                className={cn(
+                  baseCell,
+                  stateClass,
+                  cellClassName,
+                  isToday && todayCellClassName
+                )}
                 style={cellInlineStyle}
                 onClick={() => isClickable && handleDateClick(cell.day)}
                 title={isClickable ? `${cell.day} ${monthName} ${view.year}` : undefined}

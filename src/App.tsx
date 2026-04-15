@@ -1,6 +1,10 @@
 import { useState } from "react";
 import AttendanceCalendar from "./AttendanceCalendar";
-import type { MonthView, AttendanceData, MonthTitlePosition } from "./AttendanceCalendar";
+import type {
+  MonthView,
+  AttendanceData,
+  MonthTitlePosition,
+} from "./AttendanceCalendar";
 
 function App() {
   const [view, setView] = useState<MonthView>({
@@ -31,7 +35,8 @@ function App() {
     },
   ];
 
-  const [titlePosition, setTitlePosition] = useState<MonthTitlePosition>("center");
+  const [titlePosition, setTitlePosition] =
+    useState<MonthTitlePosition>("center");
 
   const handleDateClick = (day: number, month: number, year: number) => {
     console.log(`Clicked on ${day}/${month + 1}/${year}`);
@@ -56,19 +61,21 @@ function App() {
             <h2 className="text-base font-semibold text-slate-800">Default</h2>
             <div className="flex items-center gap-1.5 text-xs">
               <span className="text-slate-500 mr-1">Month title position:</span>
-              {(["left", "center", "right"] as MonthTitlePosition[]).map((pos) => (
-                <button
-                  key={pos}
-                  onClick={() => setTitlePosition(pos)}
-                  className={`px-3 py-1.5 rounded-lg font-medium capitalize transition-all ${
-                    titlePosition === pos
-                      ? "bg-slate-900 text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {pos}
-                </button>
-              ))}
+              {(["left", "center", "right"] as MonthTitlePosition[]).map(
+                (pos) => (
+                  <button
+                    key={pos}
+                    onClick={() => setTitlePosition(pos)}
+                    className={`px-3 py-1.5 rounded-lg font-medium capitalize transition-all ${
+                      titlePosition === pos
+                        ? "bg-slate-900 text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {pos}
+                  </button>
+                ),
+              )}
             </div>
           </div>
           <AttendanceCalendar
@@ -77,6 +84,7 @@ function App() {
             attendanceData={attendanceData}
             onDateClick={handleDateClick}
             monthTitlePosition={titlePosition}
+            cellClassName="hover:bg-red-100"
           />
         </div>
 
@@ -84,7 +92,9 @@ function App() {
         <div className="grid sm:grid-cols-2 gap-6 mb-6">
           {/* Circle */}
           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">Circle Cells</h2>
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Circle Cells
+            </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
@@ -101,7 +111,9 @@ function App() {
 
           {/* Square */}
           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">Square Cells</h2>
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Square Cells
+            </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
@@ -121,7 +133,9 @@ function App() {
         <div className="grid sm:grid-cols-2 gap-6 mb-6">
           {/* Custom Size */}
           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">Custom Size (50px)</h2>
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Custom Size (50px)
+            </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
@@ -139,7 +153,9 @@ function App() {
 
           {/* Compact */}
           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">Compact (32px)</h2>
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Compact (32px)
+            </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
@@ -158,7 +174,9 @@ function App() {
 
         {/* Props reference */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-800 mb-4">Available Props</h2>
+          <h2 className="text-base font-semibold text-slate-800 mb-4">
+            Available Props
+          </h2>
           <div className="grid sm:grid-cols-2 gap-6">
             <ul className="space-y-2 text-sm text-slate-600">
               {[
@@ -182,7 +200,9 @@ function App() {
               ))}
             </ul>
             <div>
-              <p className="text-sm font-medium text-slate-700 mb-3">Cell shapes</p>
+              <p className="text-sm font-medium text-slate-700 mb-3">
+                Cell shapes
+              </p>
               <div className="flex flex-wrap gap-4">
                 {[
                   { label: "Circle", cls: "rounded-full" },
@@ -197,9 +217,10 @@ function App() {
               </div>
               <div className="mt-5 p-3.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
                 <p className="text-slate-600 text-xs leading-relaxed">
-                  <strong className="text-slate-700">Pro Tip:</strong> Use any Tailwind CSS
-                  classes for complete customization. Cells are responsive by default — they
-                  fill available space and scale perfectly on all screen sizes.
+                  <strong className="text-slate-700">Pro Tip:</strong> Use any
+                  Tailwind CSS classes for complete customization. Cells are
+                  responsive by default — they fill available space and scale
+                  perfectly on all screen sizes.
                 </p>
               </div>
             </div>
