@@ -14,7 +14,7 @@ A modern, responsive, and highly customizable attendance calendar component for 
 - 🔄 **Flexible data format** - Support both single month and array of months
 - ⚡ **Auto-initialization** - Defaults to current month if no view provided
 - 🎯 **Smart navigation** - Seamless month/year transitions
-- 🗓️ **Today highlight** - Current date is automatically highlighted
+- 🗓️ **Today highlight** - Current date is highlighted; style it with `todayCellClassName` (merged last so it wins over present/absent/cell classes)
 - 📐 **Flexible header** - Position month title left, center, or right
 
 ## 📦 Installation
@@ -147,6 +147,20 @@ const attendanceData = [
 />
 ```
 
+### Today cell (`todayCellClassName`)
+
+The current calendar date (“today”) gets default emphasis (dark slate when the day is neither present nor absent; a ring when it is present or absent). Pass **`todayCellClassName`** with Tailwind utilities to fully control that cell. These classes are **merged last** on the cell, so they override `cellClassName`, `presentCellClassName`, and `absentCellClassName` for today only.
+
+```tsx
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  attendanceData={attendanceData}
+  presentCellClassName="bg-emerald-500 text-white"
+  todayCellClassName="ring-4 ring-violet-500 ring-offset-2 scale-105 bg-violet-600 text-white"
+/>
+```
+
 ### Custom Cell Sizes
 
 ```tsx
@@ -264,6 +278,7 @@ export default App;
 | `monthTitleClassName`       | `string`                     | ❌       | Custom classes for month title                     |
 | `weekdayHeaderClassName`    | `string`                     | ❌       | Custom classes for weekday headers                 |
 | `containerClassName`        | `string`                     | ❌       | Custom classes for main container                  |
+| `todayCellClassName`        | `string`                     | ❌       | Classes for **today’s** cell only; merged **last** so they override other cell props |
 
 ### TypeScript
 
@@ -295,6 +310,8 @@ The component uses Tailwind CSS classes with a modern design system:
 - **Present days**: Emerald green (`emerald-500`) with white text
 - **Absent days**: Amber orange (`amber-500`) with white text
 - **Regular days**: Slate gray (`slate-700`) with light border
+- **Today** (not present/absent): Dark slate background (`slate-900`) with white text; use `todayCellClassName` to replace or extend
+- **Today** (present/absent): Same as that status, plus a subtle ring; override with `todayCellClassName`
 - **Navigation**: Rounded buttons with hover effects
 - **Typography**: Clean, readable fonts with proper hierarchy
 
@@ -323,6 +340,7 @@ All Tailwind classes are supported:
 - Colors, spacing, borders, shadows
 - Hover effects, transitions, animations
 - Responsive breakpoints and utilities
+- **`todayCellClassName`** — prefer this for today’s look so your utilities reliably override shared props like `presentCellClassName`
 
 ## 🔄 Multi-Month Data Format
 

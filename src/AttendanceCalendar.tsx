@@ -45,6 +45,8 @@ export type CalendarProps = {
   weekdayHeaderClassName?: string;
   monthTitleClassName?: string;
   containerClassName?: string;
+  /** Merged last on today's cell so these classes win over present/absent/cell defaults */
+  todayCellClassName?: string;
 };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
@@ -129,6 +131,7 @@ export default function AttendanceCalendar({
   weekdayHeaderClassName = "",
   monthTitleClassName = "",
   containerClassName = "",
+  todayCellClassName = "",
 }: CalendarProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [columns, setColumns] = useState<number>(7);
@@ -326,13 +329,13 @@ export default function AttendanceCalendar({
             stateClass = "text-slate-300 border border-slate-100";
           } else if (isPresent) {
             stateClass = cn(
-              "bg-emerald-500 text-white shadow-sm shadow-emerald-200",
+              "bg-emerald-500 text-white",
               isToday && "ring-2 ring-offset-1 ring-emerald-400",
               presentCellClassName
             );
           } else if (isAbsent) {
             stateClass = cn(
-              "bg-amber-500 text-white shadow-sm shadow-amber-200",
+              "bg-amber-500 text-white",
               isToday && "ring-2 ring-offset-1 ring-amber-400",
               absentCellClassName
             );
@@ -345,7 +348,7 @@ export default function AttendanceCalendar({
           return (
             <div key={idx} className="flex items-center justify-center p-0.5">
               <div
-                className={cn(baseCell, stateClass)}
+                className={cn(baseCell, stateClass, isToday && todayCellClassName)}
                 style={cellInlineStyle}
                 onClick={() => isClickable && handleDateClick(cell.day)}
                 title={isClickable ? `${cell.day} ${monthName} ${view.year}` : undefined}
