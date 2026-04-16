@@ -1,11 +1,19 @@
-// Import styles
 import "./styles.css";
 
-export { default as AttendanceCalendar, cn } from "./AttendanceCalendar";
+export { Calendar, useCalendar, cn } from "./calendar";
+export { default as AttendanceCalendar } from "./attendance-calendar";
+
+export type { AttendanceCalendarProps } from "./attendance-calendar";
 export type {
   MonthView,
-  AttendanceData,
-  CalendarProps,
-  MonthTitlePosition,
   MonthAttendanceData,
-} from "./AttendanceCalendar";
+  AttendanceData,
+  CellData,
+  GridClassNames,
+  CalendarContextValue,
+  RootProps,
+  HeaderProps,
+  TitleProps,
+  WeekDaysProps,
+  GridProps,
+} from "./calendar";

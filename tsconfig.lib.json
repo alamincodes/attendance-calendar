@@ -23,7 +23,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/AttendanceCalendar.tsx", "src/index.ts"],
+  "include": ["src/calendar/**/*.ts", "src/calendar/**/*.tsx", "src/attendance-calendar.tsx", "src/index.ts"],
   "exclude": [
     "node_modules",
     "dist",

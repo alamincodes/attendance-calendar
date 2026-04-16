@@ -1,44 +1,33 @@
 # React Attendance Calendar
 
-A modern, responsive, and highly customizable attendance calendar component for React with full TypeScript support. Perfect for tracking employee attendance, student presence, or any date-based status system.
+A modern, responsive React attendance calendar with a **compound component** architecture. Style it with classes, swap out navigation buttons, render custom cells — or just drop in the pre-composed version and go.
 
-## ✨ Features
+## Features
 
-- 📅 **Responsive design** - Automatically switches between 7-14 columns based on container width
-- 🎨 **Fully customizable** - Complete control with Tailwind CSS classes
-- 🖱️ **Interactive** - Date click callbacks with hover effects
-- 📱 **Mobile-friendly** - Fluid cells scale with container — no overflow on any screen size
-- 🔧 **TypeScript support** - Full type safety and IntelliSense
-- 🎭 **Beautiful defaults** - Modern design with emerald/amber color scheme
-- 📊 **Multi-month support** - Provide attendance data for multiple months at once
-- 🔄 **Flexible data format** - Support both single month and array of months
-- ⚡ **Auto-initialization** - Defaults to current month if no view provided
-- 🎯 **Smart navigation** - Seamless month/year transitions
-- 🗓️ **Today highlight** - Current date is highlighted; style it with `todayCellClassName` (merged last so it wins over present/absent/cell classes)
-- 📐 **Flexible header** - Position month title left, center, or right
+- **Compound components** — compose `Calendar.Root`, `Header`, `Title`, `PrevTrigger`, `NextTrigger`, `WeekDays`, and `Grid` any way you like
+- **Pre-composed default** — `AttendanceCalendar` works out of the box with zero config
+- **`renderCell`** — full control over every cell's markup and style
+- **`useCalendar()` hook** — headless access to all calendar state for completely custom UIs
+- **`classNames` object** — one clean prop for `cell`, `present`, `absent`, `today`, `outside` styles
+- **Responsive** — auto-switches between 7 and 14 columns based on container width
+- **TypeScript** — full type safety and IntelliSense
+- **Multi-month data** — provide attendance for multiple months at once
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install react-attendance-calendar
 ```
 
-### 🎨 CSS Setup
-
-**Simply import the CSS in your app:**
+Import the CSS once in your app entry:
 
 ```tsx
-// In your main app file (e.g., App.tsx, main.tsx, or _app.tsx)
 import "react-attendance-calendar/styles.css";
 ```
 
-**That's it!** The component will render with beautiful default styling.
+> The package ships pre-compiled CSS. If you use Tailwind CSS v4, you can further customize via `className` and `classNames` props.
 
-> **Note:** No additional setup required. The package includes pre-compiled CSS. If you're using Tailwind CSS v4 in your project, you can customize the component further using the `className` props.
-
-## 🚀 Usage
-
-### Basic Example
+## Quick Start
 
 ```tsx
 import { useState } from "react";
@@ -48,351 +37,310 @@ import "react-attendance-calendar/styles.css";
 function App() {
   const [view, setView] = useState({ year: 2024, monthIndex: 0 });
 
-  return <AttendanceCalendar view={view} onChangeView={setView} />;
-}
-```
-
-### Minimal Example (Auto-initialize to current month)
-
-```tsx
-import { AttendanceCalendar } from "react-attendance-calendar";
-import "react-attendance-calendar/styles.css";
-
-function App() {
-  const [view, setView] = useState();
-
-  return <AttendanceCalendar onChangeView={setView} />;
-}
-```
-
-### With Single Month Attendance Data
-
-```tsx
-import { AttendanceCalendar } from "react-attendance-calendar";
-import "react-attendance-calendar/styles.css";
-
-const attendanceData = {
-  year: 2024,
-  monthIndex: 0,
-  presentDays: new Set([1, 2, 3, 5, 8, 9, 10]),
-  absentDays: new Set([4, 11]),
-};
-
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  attendanceData={attendanceData}
-  onDateClick={(day, month, year) => console.log(day, month, year)}
-/>;
-```
-
-### With Multiple Months Attendance Data
-
-```tsx
-import { AttendanceCalendar } from "react-attendance-calendar";
-import "react-attendance-calendar/styles.css";
-
-// Provide data for multiple months at once
-const attendanceData = [
-  // January 2024
-  {
+  const data = {
     year: 2024,
     monthIndex: 0,
-    presentDays: new Set([
-      1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
-    ]),
-    absentDays: new Set([4, 11, 18, 25]),
-  },
-  // February 2025
-  {
-    year: 2025,
-    monthIndex: 1,
-    presentDays: new Set([
-      1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
-    ]),
-    absentDays: new Set([3, 10, 17, 24]),
-  },
-];
-
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  attendanceData={attendanceData}
-  onDateClick={(day, month, year) => console.log(day, month, year)}
-/>;
-```
-
-### Custom Month Title Position
-
-```tsx
-// Center (default) — [←]  January 2024  [→]
-<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="center" />
-
-// Left — January 2024  [← →]
-<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="left" />
-
-// Right — [← →]  January 2024
-<AttendanceCalendar view={view} onChangeView={setView} monthTitlePosition="right" />
-```
-
-### Custom Styling
-
-```tsx
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  presentCellClassName="bg-blue-500 text-white"
-  absentCellClassName="bg-red-500 text-white"
-  cellClassName="rounded-full"
-/>
-```
-
-### Today cell (`todayCellClassName`)
-
-The current calendar date (“today”) gets default emphasis (dark slate when the day is neither present nor absent; a ring when it is present or absent). Pass **`todayCellClassName`** with Tailwind utilities to fully control that cell. These classes are **merged last** on the cell, so they override `cellClassName`, `presentCellClassName`, and `absentCellClassName` for today only.
-
-```tsx
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  attendanceData={attendanceData}
-  presentCellClassName="bg-emerald-500 text-white"
-  todayCellClassName="ring-4 ring-violet-500 ring-offset-2 scale-105 bg-violet-600 text-white"
-/>
-```
-
-### Custom Cell Sizes
-
-```tsx
-// Square cells with custom size
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  cellSize={60} // 60px x 60px cells
-/>
-
-// Custom width and height
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  cellWidth={80}  // 80px wide
-  cellHeight={50} // 50px tall
-/>
-
-// Small compact calendar
-<AttendanceCalendar
-  view={view}
-  onChangeView={setView}
-  cellSize={32} // 32px x 32px cells
-  cellClassName="text-xs"
-/>
-```
-
-### Complete Example with Custom Styling
-
-```tsx
-import { useState } from "react";
-import {
-  AttendanceCalendar,
-  type MonthView,
-  type AttendanceData,
-} from "react-attendance-calendar";
-import "react-attendance-calendar/styles.css";
-
-function App() {
-  const [view, setView] = useState<MonthView>({
-    year: 2024,
-    monthIndex: 0, // January
-  });
-
-  // Sample attendance data for multiple months
-  const attendanceData: AttendanceData = [
-    // January 2024
-    {
-      year: 2024,
-      monthIndex: 0,
-      presentDays: new Set([
-        1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
-      ]),
-      absentDays: new Set([4, 11, 18, 25]),
-    },
-    // February 2025
-    {
-      year: 2025,
-      monthIndex: 1,
-      presentDays: new Set([
-        1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
-      ]),
-      absentDays: new Set([3, 10, 17, 24]),
-    },
-  ];
-
-  const handleDateClick = (day: number, month: number, year: number) => {
-    console.log(`Clicked on ${day}/${month + 1}/${year}`);
-    // Your custom logic here
+    presentDays: new Set([1, 2, 3, 5, 8, 9, 10]),
+    absentDays: new Set([4, 11]),
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <AttendanceCalendar
-        view={view}
-        onChangeView={setView}
-        attendanceData={attendanceData}
-        onDateClick={handleDateClick}
-        showNavigation={true}
-        showWeekdayHeaders={true}
-        // Custom styling with className props
-        cellClassName="rounded-full"
-        presentCellClassName="bg-green-500 text-white shadow-lg"
-        absentCellClassName="bg-red-500 text-white border-2 border-red-300"
-        navigationButtonClassName="bg-blue-500 text-white hover:bg-blue-600"
-        monthTitleClassName="text-3xl text-purple-600"
-        containerClassName="border border-gray-200 rounded-lg p-4"
-      />
-    </div>
+    <AttendanceCalendar
+      view={view}
+      onChangeView={setView}
+      attendanceData={data}
+      onDateClick={(day, month, year) => console.log(day, month, year)}
+    />
   );
 }
-
-export default App;
 ```
 
-## 📚 Props
+## Usage
 
-| Prop                        | Type                         | Required | Description                                        |
-| --------------------------- | ---------------------------- | -------- | -------------------------------------------------- |
-| `view`                      | `MonthView`                  | ❌       | Current month and year (defaults to current month) |
-| `onChangeView`              | `(view: MonthView) => void`  | ✅       | Month navigation callback                          |
-| `attendanceData`            | `AttendanceData`             | ❌       | Present/absent days data (single month or array)   |
-| `onDateClick`               | `(day, month, year) => void` | ❌       | Date click callback                                |
-| `monthTitlePosition`        | `'left' \| 'center' \| 'right'` | ❌    | Position of the month title (default: `'center'`)  |
-| `showNavigation`            | `boolean`                    | ❌       | Show nav arrows (default: `true`)                  |
-| `showWeekdayHeaders`        | `boolean`                    | ❌       | Show weekday headers (default: `true`)             |
-| `cellSize`                  | `number`                     | ❌       | Size in pixels for all calendar cells (square)     |
-| `cellHeight`                | `number`                     | ❌       | Height in pixels for calendar cells                |
-| `cellWidth`                 | `number`                     | ❌       | Width in pixels for calendar cells                 |
-| `className`                 | `string`                     | ❌       | Additional classes for root element                |
-| `cellClassName`             | `string`                     | ❌       | Custom classes for all cells                       |
-| `presentCellClassName`      | `string`                     | ❌       | Custom classes for present days                    |
-| `absentCellClassName`       | `string`                     | ❌       | Custom classes for absent days                     |
-| `navigationButtonClassName` | `string`                     | ❌       | Custom classes for nav buttons                     |
-| `monthTitleClassName`       | `string`                     | ❌       | Custom classes for month title                     |
-| `weekdayHeaderClassName`    | `string`                     | ❌       | Custom classes for weekday headers                 |
-| `containerClassName`        | `string`                     | ❌       | Custom classes for main container                  |
-| `todayCellClassName`        | `string`                     | ❌       | Classes for **today’s** cell only; merged **last** so they override other cell props |
+### Pre-composed (simple)
 
-### TypeScript
+The `AttendanceCalendar` component is a ready-to-use calendar with sensible defaults. Pass a `classNames` object to customize cell styles without touching the layout.
+
+```tsx
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  attendanceData={data}
+  classNames={{
+    cell: "rounded-full",
+    present: "bg-teal-500 shadow-md",
+    absent: "bg-rose-500",
+    today: "ring-2 ring-blue-400",
+    outside: "opacity-20",
+  }}
+/>
+```
+
+### Compound components (full control)
+
+Build your own layout with `Calendar.*` components. Place the title, navigation buttons, weekday headers, and grid wherever you want.
+
+```tsx
+import { Calendar } from "react-attendance-calendar";
+import "react-attendance-calendar/styles.css";
+
+function MyCalendar() {
+  const [view, setView] = useState({ year: 2024, monthIndex: 0 });
+
+  return (
+    <Calendar.Root
+      view={view}
+      onChangeView={setView}
+      attendanceData={data}
+      onDateClick={(day, month, year) => console.log(day, month, year)}
+    >
+      <Calendar.Header>
+        <Calendar.Title className="text-indigo-700" />
+        <div className="flex gap-2">
+          <Calendar.PrevTrigger className="rounded-full bg-indigo-500 text-white">
+            ←
+          </Calendar.PrevTrigger>
+          <Calendar.NextTrigger className="rounded-full bg-indigo-500 text-white">
+            →
+          </Calendar.NextTrigger>
+        </div>
+      </Calendar.Header>
+      <Calendar.WeekDays dayClassName="text-indigo-400" />
+      <Calendar.Grid
+        classNames={{
+          present: "bg-indigo-500",
+          absent: "bg-pink-500",
+        }}
+      />
+    </Calendar.Root>
+  );
+}
+```
+
+### Custom title format
+
+```tsx
+<Calendar.Title
+  format={(monthName, year) => (
+    <span className="text-lg font-medium">
+      {monthName} / {year}
+    </span>
+  )}
+/>
+```
+
+### Custom cell rendering
+
+Use `renderCell` on `Calendar.Grid` (or the pre-composed `AttendanceCalendar`) for complete control over each cell's markup. The callback receives a `CellData` object with all the state you need.
+
+```tsx
+<Calendar.Grid
+  renderCell={(cell) => (
+    <div
+      className={`w-full aspect-square grid place-items-center rounded-xl text-sm ${
+        cell.isPresent
+          ? "bg-green-100 text-green-700"
+          : cell.isAbsent
+            ? "bg-red-100 text-red-700"
+            : cell.isToday
+              ? "bg-blue-600 text-white"
+              : "text-slate-600"
+      }`}
+    >
+      {cell.day}
+      {cell.isPresent && <span className="text-[10px]">✓</span>}
+      {cell.isAbsent && <span className="text-[10px]">✗</span>}
+    </div>
+  )}
+/>
+```
+
+### Headless with `useCalendar()`
+
+For a completely custom UI, use the hook inside a `Calendar.Root`:
+
+```tsx
+import { Calendar, useCalendar } from "react-attendance-calendar";
+
+function HeadlessCalendar() {
+  const { view, monthName, goPrev, goNext, cells, currentMonthData, today, columns } =
+    useCalendar();
+
+  // Build any UI you want with full access to calendar state
+  return <div>{/* your custom markup */}</div>;
+}
+
+function App() {
+  const [view, setView] = useState({ year: 2024, monthIndex: 0 });
+
+  return (
+    <Calendar.Root view={view} onChangeView={setView} attendanceData={data}>
+      <HeadlessCalendar />
+    </Calendar.Root>
+  );
+}
+```
+
+### Custom cell sizes
+
+```tsx
+// Square cells
+<AttendanceCalendar view={view} onChangeView={setView} cellSize={50} />
+
+// Custom width and height
+<AttendanceCalendar view={view} onChangeView={setView} cellWidth={80} cellHeight={50} />
+
+// Compact
+<AttendanceCalendar
+  view={view}
+  onChangeView={setView}
+  cellSize={32}
+  classNames={{ cell: "rounded-full text-xs" }}
+/>
+```
+
+### Multi-month data
+
+Pass an array to `attendanceData` to pre-load multiple months. Navigation between loaded months is instant.
+
+```tsx
+const data: AttendanceData = [
+  {
+    year: 2024,
+    monthIndex: 0,
+    presentDays: new Set([1, 2, 3, 5, 8, 9, 10]),
+    absentDays: new Set([4, 11]),
+  },
+  {
+    year: 2024,
+    monthIndex: 1,
+    presentDays: new Set([1, 2, 5, 6, 7]),
+    absentDays: new Set([3, 4, 8]),
+  },
+];
+
+<AttendanceCalendar view={view} onChangeView={setView} attendanceData={data} />;
+```
+
+## API Reference
+
+### `AttendanceCalendar` (pre-composed)
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `view` | `MonthView` | current month | Current month and year |
+| `onChangeView` | `(view: MonthView) => void` | **required** | Month navigation callback |
+| `attendanceData` | `AttendanceData` | — | Present/absent days (single or array) |
+| `onDateClick` | `(day, month, year) => void` | — | Date click callback |
+| `showNavigation` | `boolean` | `true` | Show header with nav buttons |
+| `showWeekDays` | `boolean` | `true` | Show weekday labels |
+| `className` | `string` | — | Root container class |
+| `classNames` | `GridClassNames` | — | Cell style overrides (see below) |
+| `cellSize` | `number` | — | Square cell size in px |
+| `cellWidth` | `number` | — | Cell width in px |
+| `cellHeight` | `number` | — | Cell height in px |
+| `renderCell` | `(state: CellData) => ReactNode` | — | Custom cell renderer |
+
+### `GridClassNames`
+
+```typescript
+type GridClassNames = {
+  cell?: string;    // Base class for all cells
+  present?: string; // Present-day cells
+  absent?: string;  // Absent-day cells
+  today?: string;   // Today's cell (merged last, wins over present/absent)
+  outside?: string; // Days outside current month
+};
+```
+
+### `CellData`
+
+Passed to `renderCell`:
+
+```typescript
+type CellData = {
+  day: number;
+  date: Date;
+  inCurrentMonth: boolean;
+  isPresent: boolean;
+  isAbsent: boolean;
+  isToday: boolean;
+  isClickable: boolean;
+};
+```
+
+### Compound Components
+
+| Component | Props | Description |
+| --- | --- | --- |
+| `Calendar.Root` | `view`, `onChangeView`, `attendanceData`, `onDateClick`, `className`, `children` | Context provider and container |
+| `Calendar.Header` | `className`, `children` | Flex wrapper for title + nav |
+| `Calendar.Title` | `className`, `format?` | Month/year heading |
+| `Calendar.PrevTrigger` | all `<button>` props | Previous month button |
+| `Calendar.NextTrigger` | all `<button>` props | Next month button |
+| `Calendar.WeekDays` | `className`, `dayClassName`, `labels?` | Weekday labels row |
+| `Calendar.Grid` | `className`, `classNames`, `cellSize`, `cellHeight`, `cellWidth`, `renderCell` | Date grid |
+
+### `useCalendar()` Hook
+
+Returns all calendar state when used inside `Calendar.Root`:
+
+```typescript
+const {
+  view,            // MonthView — current month/year
+  monthName,       // string — e.g. "January"
+  today,           // { day, month, year }
+  currentMonthData,// MonthAttendanceData | undefined
+  columns,         // number — 7 or 14 (responsive)
+  cells,           // { day, inCurrentMonth }[]
+  weekdayLabels,   // string[]
+  goPrev,          // () => void
+  goNext,          // () => void
+  onDateClick,     // ((day, month, year) => void) | undefined
+} = useCalendar();
+```
+
+### Types
 
 ```typescript
 type MonthView = {
-  year: number; // e.g., 2024
-  monthIndex: number; // 0-11 (0 = January)
+  year: number;
+  monthIndex: number; // 0-11
 };
 
 type MonthAttendanceData = {
   year: number;
   monthIndex: number;
-  presentDays: Set<number>; // Day numbers 1-31
-  absentDays: Set<number>; // Day numbers 1-31
+  presentDays: Set<number>;
+  absentDays: Set<number>;
 };
 
-// Support both single month and multiple months
 type AttendanceData = MonthAttendanceData | MonthAttendanceData[];
-
-type MonthTitlePosition = "left" | "center" | "right";
 ```
 
-## 🎨 Styling
+## Default Theme
 
-The component uses Tailwind CSS classes with a modern design system:
+- **Present** — emerald green (`emerald-500`) with white text
+- **Absent** — amber orange (`amber-500`) with white text
+- **Today** (no data) — dark slate (`slate-900`) with white text
+- **Today** (present/absent) — status color + ring highlight
+- **Outside month** — faded with light border
+- **Navigation** — rounded buttons with hover/active effects
 
-### Default Theme
+## Responsive Behavior
 
-- **Present days**: Emerald green (`emerald-500`) with white text
-- **Absent days**: Amber orange (`amber-500`) with white text
-- **Regular days**: Slate gray (`slate-700`) with light border
-- **Today** (not present/absent): Dark slate background (`slate-900`) with white text; use `todayCellClassName` to replace or extend
-- **Today** (present/absent): Same as that status, plus a subtle ring; override with `todayCellClassName`
-- **Navigation**: Rounded buttons with hover effects
-- **Typography**: Clean, readable fonts with proper hierarchy
+- Cells use `w-full aspect-square` by default — fluid with no overflow
+- Container >= 700px: switches to 14-column layout
+- Narrow / mobile: 7-column layout with touch-friendly sizing
+- Use `cellSize`, `cellWidth`, or `cellHeight` for fixed pixel dimensions
 
-### Responsive Behavior
-
-- **All screens**: Cells use `w-full aspect-square` by default — they fluidly fill the grid column with no overflow
-- **Desktop (≥700px container)**: Switches to 14-column layout
-- **Narrow containers / mobile**: 7-column layout with touch-friendly sizing
-- **Fixed size mode**: Use `cellSize`, `cellWidth`, or `cellHeight` for explicit pixel dimensions
-
-### Customization
-
-Override any styling using the `className` props and size controls:
-
-#### Size Control
-
-- **`cellSize`** - Set both width and height for square cells
-- **`cellWidth`** - Set only the width of cells
-- **`cellHeight`** - Set only the height of cells
-- **Automatic font sizing** - Text size adjusts based on cell dimensions
-
-#### Styling Options
-
-All Tailwind classes are supported:
-
-- Colors, spacing, borders, shadows
-- Hover effects, transitions, animations
-- Responsive breakpoints and utilities
-- **`todayCellClassName`** — prefer this for today’s look so your utilities reliably override shared props like `presentCellClassName`
-
-## 🔄 Multi-Month Data Format
-
-The `attendanceData` prop supports two formats:
-
-### Single Month (Legacy Format)
-
-```typescript
-const attendanceData: AttendanceData = {
-  year: 2024,
-  monthIndex: 0,
-  presentDays: new Set([1, 2, 3, 5, 8]),
-  absentDays: new Set([4, 6, 7]),
-};
-```
-
-### Multiple Months (New Format)
-
-```typescript
-const attendanceData: AttendanceData = [
-  {
-    year: 2024,
-    monthIndex: 0, // January
-    presentDays: new Set([1, 2, 3, 5, 8]),
-    absentDays: new Set([4, 6, 7]),
-  },
-  {
-    year: 2024,
-    monthIndex: 1, // February
-    presentDays: new Set([1, 2, 5, 6, 7]),
-    absentDays: new Set([3, 4, 8]),
-  },
-  // ... add more months as needed
-];
-```
-
-**Benefits of Multi-Month Format:**
-
-- ✅ **Batch loading** - Load attendance data for multiple months at once
-- ✅ **Better performance** - No need to fetch data when navigating between months
-- ✅ **Seamless navigation** - Smooth transitions between months with data
-- ✅ **Backward compatible** - Works with existing single month format
-- ✅ **Memory efficient** - Store data in memory for instant access
-- ✅ **Offline ready** - Pre-load data for offline calendar browsing
-
-## 📝 License
+## License
 
 MIT © [Alamin](https://github.com/alamincodes)
 
 ---
 
 <div align="center">
-  <a href="https://github.com/alamincodes/attendance-calendar">GitHub</a> • 
+  <a href="https://github.com/alamincodes/attendance-calendar">GitHub</a> •
   <a href="https://www.npmjs.com/package/react-attendance-calendar">npm</a>
 </div>

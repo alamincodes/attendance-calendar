@@ -1,46 +1,73 @@
 import { useState } from "react";
-import AttendanceCalendar from "./AttendanceCalendar";
-import type {
-  MonthView,
-  AttendanceData,
-  MonthTitlePosition,
-} from "./AttendanceCalendar";
+import AttendanceCalendar from "./attendance-calendar";
+import { Calendar, useCalendar } from "./calendar";
+import type { MonthView, AttendanceData } from "./calendar/types";
+
+const DEMO_DATA: AttendanceData = [
+  {
+    year: 2024,
+    monthIndex: 0,
+    presentDays: new Set([
+      1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
+    ]),
+    absentDays: new Set([4, 11, 18, 25]),
+  },
+  {
+    year: 2025,
+    monthIndex: 1,
+    presentDays: new Set([
+      1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27,
+      28,
+    ]),
+    absentDays: new Set([3, 10, 17, 24]),
+  },
+];
+
+function CustomCellDemo() {
+  const { monthName, view } = useCalendar();
+
+  return (
+    <Calendar.Grid
+      renderCell={(cell) => {
+        if (!cell.inCurrentMonth) {
+          return (
+            <div className="w-full aspect-square grid place-items-center text-xs text-slate-200">
+              {cell.day}
+            </div>
+          );
+        }
+
+        return (
+          <div
+            className={`w-full aspect-square grid place-items-center rounded-xl text-sm font-medium transition-all ${
+              cell.isPresent
+                ? "bg-green-100 text-green-700 border border-green-200"
+                : cell.isAbsent
+                  ? "bg-red-100 text-red-700 border border-red-200"
+                  : cell.isToday
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-slate-600 hover:bg-slate-50"
+            }`}
+            title={`${cell.day} ${monthName} ${view.year}`}
+          >
+            <span>{cell.day}</span>
+            {cell.isPresent && <span className="text-[10px]">✓</span>}
+            {cell.isAbsent && <span className="text-[10px]">✗</span>}
+          </div>
+        );
+      }}
+    />
+  );
+}
 
 function App() {
   const [view, setView] = useState<MonthView>({
     year: 2024,
-    monthIndex: 0, // January
+    monthIndex: 0,
   });
 
-  // Sample attendance data for January 2024
-  // Demo data for multiple months
-  const attendanceData: AttendanceData = [
-    // January 2024
-    {
-      year: 2024,
-      monthIndex: 0,
-      presentDays: new Set([
-        1, 2, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19, 22, 23, 24, 26, 29, 30, 31,
-      ]),
-      absentDays: new Set([4, 11, 18, 25]),
-    },
-    // February 2025
-    {
-      year: 2025,
-      monthIndex: 1,
-      presentDays: new Set([
-        1, 2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28,
-      ]),
-      absentDays: new Set([3, 10, 17, 24]),
-    },
-  ];
-
-  const [titlePosition, setTitlePosition] =
-    useState<MonthTitlePosition>("center");
-
   const handleDateClick = (day: number, month: number, year: number) => {
-    console.log(`Clicked on ${day}/${month + 1}/${year}`);
-    alert(`You clicked on ${day}/${month + 1}/${year}`);
+    alert(`Clicked: ${day}/${month + 1}/${year}`);
   };
 
   return (
@@ -51,180 +78,152 @@ function App() {
             Attendance Calendar
           </h1>
           <p className="text-base text-slate-500">
-            Modern, customizable, and developer-friendly
+            Compound component architecture — compose your own calendar
           </p>
         </div>
 
-        {/* Default */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <h2 className="text-base font-semibold text-slate-800">Default</h2>
-            <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-slate-500 mr-1">Month title position:</span>
-              {(["left", "center", "right"] as MonthTitlePosition[]).map(
-                (pos) => (
-                  <button
-                    key={pos}
-                    onClick={() => setTitlePosition(pos)}
-                    className={`px-3 py-1.5 rounded-lg font-medium capitalize transition-all ${
-                      titlePosition === pos
-                        ? "bg-slate-900 text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    {pos}
-                  </button>
-                ),
-              )}
-            </div>
-          </div>
+        {/* 1. Simple pre-composed usage */}
+        <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
+          <h2 className="text-base font-semibold text-slate-800 mb-5">
+            Simple Usage (pre-composed)
+          </h2>
           <AttendanceCalendar
             view={view}
             onChangeView={setView}
-            attendanceData={attendanceData}
+            attendanceData={DEMO_DATA}
             onDateClick={handleDateClick}
-            monthTitlePosition={titlePosition}
-            cellClassName="hover:bg-red-100"
           />
+        </section>
+
+        {/* 2. Compound: custom classNames */}
+        <div className="grid sm:grid-cols-2 gap-6 mb-6">
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Circle + classNames
+            </h2>
+            <AttendanceCalendar
+              view={view}
+              onChangeView={setView}
+              attendanceData={DEMO_DATA}
+              onDateClick={handleDateClick}
+              classNames={{
+                cell: "rounded-full",
+                present: "shadow-md bg-teal-500",
+                absent: "bg-rose-500",
+                today: "ring-2 ring-blue-400",
+              }}
+            />
+          </section>
+
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Square + classNames
+            </h2>
+            <AttendanceCalendar
+              view={view}
+              onChangeView={setView}
+              attendanceData={DEMO_DATA}
+              onDateClick={handleDateClick}
+              classNames={{
+                cell: "rounded-none",
+                present: "bg-green-600 rounded-none",
+                absent: "bg-red-500 rounded-none",
+              }}
+            />
+          </section>
         </div>
 
-        {/* Variants */}
+        {/* 3. Compound components: full control */}
+        <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
+          <h2 className="text-base font-semibold text-slate-800 mb-5">
+            Compound Components — custom nav buttons
+          </h2>
+          <Calendar.Root
+            view={view}
+            onChangeView={setView}
+            attendanceData={DEMO_DATA}
+            onDateClick={handleDateClick}
+          >
+            <Calendar.Header>
+              <Calendar.Title className="text-indigo-700" />
+              <div className="flex items-center gap-2">
+                <Calendar.PrevTrigger className="rounded-full bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600">
+                  ←
+                </Calendar.PrevTrigger>
+                <Calendar.NextTrigger className="rounded-full bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600">
+                  →
+                </Calendar.NextTrigger>
+              </div>
+            </Calendar.Header>
+            <Calendar.WeekDays dayClassName="text-indigo-400" />
+            <Calendar.Grid
+              classNames={{
+                present: "bg-indigo-500",
+                absent: "bg-pink-500",
+                today: "ring-2 ring-indigo-300",
+              }}
+            />
+          </Calendar.Root>
+        </section>
+
+        {/* 4. Custom cell rendering */}
+        <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
+          <h2 className="text-base font-semibold text-slate-800 mb-5">
+            Custom Cell Rendering (renderCell)
+          </h2>
+          <Calendar.Root
+            view={view}
+            onChangeView={setView}
+            attendanceData={DEMO_DATA}
+            onDateClick={handleDateClick}
+          >
+            <Calendar.Header className="mb-4">
+              <Calendar.Title
+                format={(month, year) => (
+                  <span className="text-lg font-medium text-slate-700">
+                    {month} {year}
+                  </span>
+                )}
+              />
+              <div className="flex gap-1">
+                <Calendar.PrevTrigger className="size-8 rounded-lg border border-slate-200 text-slate-500" />
+                <Calendar.NextTrigger className="size-8 rounded-lg border border-slate-200 text-slate-500" />
+              </div>
+            </Calendar.Header>
+            <Calendar.WeekDays />
+            <CustomCellDemo />
+          </Calendar.Root>
+        </section>
+
+        {/* 5. Compact fixed-size */}
         <div className="grid sm:grid-cols-2 gap-6 mb-6">
-          {/* Circle */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">
-              Circle Cells
-            </h2>
-            <AttendanceCalendar
-              view={view}
-              onChangeView={setView}
-              attendanceData={attendanceData}
-              onDateClick={handleDateClick}
-              monthTitlePosition="center"
-              cellClassName="rounded-full"
-              presentCellClassName="shadow-md"
-              absentCellClassName="border-0"
-              navigationButtonClassName="rounded-full bg-blue-500 border-blue-500 text-white hover:bg-blue-600"
-              monthTitleClassName="text-purple-600"
-            />
-          </div>
-
-          {/* Square */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">
-              Square Cells
-            </h2>
-            <AttendanceCalendar
-              view={view}
-              onChangeView={setView}
-              attendanceData={attendanceData}
-              onDateClick={handleDateClick}
-              monthTitlePosition="left"
-              cellClassName="rounded-none"
-              presentCellClassName="rounded-none bg-green-600"
-              absentCellClassName="rounded-none bg-red-500"
-              navigationButtonClassName="rounded-none bg-gray-800 border-gray-800 text-white"
-              weekdayHeaderClassName="rounded-none"
-              monthTitleClassName="text-gray-800"
-            />
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-6 mb-6">
-          {/* Custom Size */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-800 mb-4">
-              Custom Size (50px)
-            </h2>
-            <AttendanceCalendar
-              view={view}
-              onChangeView={setView}
-              attendanceData={attendanceData}
-              onDateClick={handleDateClick}
-              monthTitlePosition="right"
-              cellSize={50}
-              cellClassName="rounded-xl"
-              presentCellClassName="bg-emerald-500"
-              absentCellClassName="bg-orange-500"
-              navigationButtonClassName="rounded-xl bg-indigo-500 border-indigo-500 text-white"
-              monthTitleClassName="text-indigo-700"
-            />
-          </div>
-
-          {/* Compact */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <h2 className="text-base font-semibold text-slate-800 mb-4">
               Compact (32px)
             </h2>
             <AttendanceCalendar
               view={view}
               onChangeView={setView}
-              attendanceData={attendanceData}
+              attendanceData={DEMO_DATA}
               onDateClick={handleDateClick}
-              monthTitlePosition="center"
               cellSize={32}
-              cellClassName="rounded-full text-xs"
-              presentCellClassName="bg-green-500"
-              absentCellClassName="bg-red-500"
-              navigationButtonClassName="rounded-full bg-gray-600 border-gray-600 text-white size-8"
-              monthTitleClassName="text-base text-gray-800"
+              classNames={{ cell: "rounded-full text-xs" }}
             />
-          </div>
-        </div>
+          </section>
 
-        {/* Props reference */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-800 mb-4">
-            Available Props
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            <ul className="space-y-2 text-sm text-slate-600">
-              {[
-                ["monthTitlePosition", "'left' | 'center' | 'right'"],
-                ["cellSize", "Size in px (square)"],
-                ["cellWidth / cellHeight", "Custom dimensions"],
-                ["cellClassName", "All cells"],
-                ["presentCellClassName", "Present day cells"],
-                ["absentCellClassName", "Absent day cells"],
-                ["navigationButtonClassName", "Prev / Next buttons"],
-                ["weekdayHeaderClassName", "Weekday labels"],
-                ["monthTitleClassName", "Month title text"],
-                ["containerClassName", "Outer wrapper"],
-              ].map(([prop, desc]) => (
-                <li key={prop} className="flex flex-wrap gap-x-2 gap-y-0.5">
-                  <code className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">
-                    {prop}
-                  </code>
-                  <span className="text-slate-400">{desc}</span>
-                </li>
-              ))}
-            </ul>
-            <div>
-              <p className="text-sm font-medium text-slate-700 mb-3">
-                Cell shapes
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {[
-                  { label: "Circle", cls: "rounded-full" },
-                  { label: "Rounded", cls: "rounded-lg" },
-                  { label: "Square", cls: "rounded-none" },
-                ].map(({ label, cls }) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <div className={`w-6 h-6 bg-emerald-500 ${cls}`} />
-                    <span className="text-slate-500 text-xs">{label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 p-3.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  <strong className="text-slate-700">Pro Tip:</strong> Use any
-                  Tailwind CSS classes for complete customization. Cells are
-                  responsive by default — they fill available space and scale
-                  perfectly on all screen sizes.
-                </p>
-              </div>
-            </div>
-          </div>
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-800 mb-4">
+              Large (50px)
+            </h2>
+            <AttendanceCalendar
+              view={view}
+              onChangeView={setView}
+              attendanceData={DEMO_DATA}
+              onDateClick={handleDateClick}
+              cellSize={50}
+              classNames={{ cell: "rounded-xl" }}
+            />
+          </section>
         </div>
       </div>
     </div>
