@@ -119,6 +119,21 @@ function MyCalendar() {
 
 ### Custom title format
 
+Use `format` for full control over the title markup, or keep the default layout and style the month (`className` on the `<h2>`) and year (`yearClassName` on the year span) separately.
+
+**Default title with separate year styling**
+
+`className` applies to the whole heading (`<h2>`). `yearClassName` applies only to the year number and overrides the default `text-slate-500` (merged with `tailwind-merge`, so a new `text-*` class wins).
+
+```tsx
+<Calendar.Title
+  className="text-indigo-900"
+  yearClassName="text-indigo-600"
+/>
+```
+
+**Fully custom title**
+
 ```tsx
 <Calendar.Title
   format={(monthName, year) => (
@@ -275,7 +290,7 @@ type CellData = {
 | --- | --- | --- |
 | `Calendar.Root` | `view`, `onChangeView`, `attendanceData`, `onDateClick`, `className`, `children` | Context provider and container |
 | `Calendar.Header` | `className`, `children` | Flex wrapper for title + nav |
-| `Calendar.Title` | `className`, `format?` | Month/year heading |
+| `Calendar.Title` | `className`, `yearClassName?`, `format?` | Month/year heading — `yearClassName` styles the year span only (default year color: `text-slate-500`) |
 | `Calendar.PrevTrigger` | all `<button>` props | Previous month button |
 | `Calendar.NextTrigger` | all `<button>` props | Next month button |
 | `Calendar.WeekDays` | `className`, `dayClassName`, `labels?` | Weekday labels row |
